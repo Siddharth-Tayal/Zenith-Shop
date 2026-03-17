@@ -1,7 +1,20 @@
 services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: ecommerce_master
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
   mongodb:
     image: mongo
     ports: ["27017:27017"]
+    volumes:
+      - mongo_data:/data/db
 
   redis:
     image: redis
@@ -24,3 +37,6 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+volumes:
+  postgres_data:
+  mongo_data:
