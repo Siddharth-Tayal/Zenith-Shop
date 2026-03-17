@@ -2,19 +2,35 @@
   "name": "ecommerce-backend",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",  
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon services/api-gateway/index.js",
+    "db:gen": "prisma generate --schema=./packages/database/postgres/schema.prisma && prisma generate --schema=./packages/database/mongodb/schema.prisma",
+    "db:migrate": "prisma migrate dev --schema=./packages/database/postgres/schema.prisma"
   },
+  "workspaces": [
+    "packages/*",
+    "services/*"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "http-proxy-middleware": "^3.0.5",
+    "ioredis": "^5.10.0",
     "kafkajs": "^2.2.4",
     "mongoose": "^9.3.0",
     "nodemailer": "^8.0.2",
     "redis": "^5.11.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.2"
   }
 }
