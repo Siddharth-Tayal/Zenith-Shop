@@ -3,6 +3,7 @@ import Redis from 'ioredis';
 const redis = Redis.createClient({
 	url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
+
 redis.on('connect' , ()=>console.log('🚀 Redis Connected'));
 redis.on('error' , (err)=>console.log('❌ Redis Error:', err));
 
