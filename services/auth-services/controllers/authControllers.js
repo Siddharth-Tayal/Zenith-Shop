@@ -7,6 +7,9 @@ import { KafkaUtil } from '../../../packages/shared/kafka.js';
 export const register = async (req, res) => {
     const { email, password } = req.body;
     try {
+        if (!email.includes('@') || password.length < 6) {
+            return res.status(400).json({ error: "Invalid email or weak password" });
+        }
         const hashedPassword = await bcrypt.hash(password, 10);
         console.log(hashedPassword)
         // 1. Primary Write (Postgres)
@@ -14,12 +17,12 @@ export const register = async (req, res) => {
             data: { email, password: hashedPassword }
         });
 
-        // 2. Event Emission (Kafka) - For analytics, welcome emails, or search indexing
-        await KafkaUtil.emit('user.events', { 
+        // 2. Event Emission (Kafka)
+        KafkaUtil.emit('user.events', { 
             type: 'USER_REGISTERED', 
             userId: user.id, 
             email 
-        });
+        }).catch(err => console.error("Kafka Event Failed:", err));
 
         res.status(201).json({ message: "User created", userId: user.id });
     } catch (error) {
@@ -38,7 +41,11 @@ export const login = async (req, res) => {
 
         // 2. SCALE STEP: Cache the session in Redis
         // This prevents the Gateway from hitting the DB on every request
-        await RedisUtil.setCache(`session:${user.id}`, { active: true, email }, 86400);
+        await RedisUtil.setCache(`session:${user.id}`, { 
+            active: true, 
+            email: user.email,
+            role: user.role || 'USER' 
+        }, 86400);
 
         // 3. Audit Log (Kafka) - Record the login without slowing down the response
         await KafkaUtil.emit('user.events', { type: 'USER_LOGIN', userId: user.id });
