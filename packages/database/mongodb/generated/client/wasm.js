@@ -142,7 +142,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../../../.env"
   },
   "relativePath": "../..",
@@ -152,6 +152,7 @@ const config = {
     "db"
   ],
   "activeProvider": "mongodb",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -160,8 +161,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/client\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"MONGODB_URL\")\n}\n\nmodel Product {\n  id          String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name        String\n  description String\n  price       Float\n  stock       Int\n  category    String\n  attributes  Json? // Flexible fields like { \"color\": \"red\", \"size\": \"XL\" }\n  tags        String[]\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n}\n",
-  "inlineSchemaHash": "7d6f57a8a4815fe7544bfb2c0b10c75ae5fb3f0d7473f461e2482ce4a60442c8",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/client\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"MONGODB_URL\")\n}\n\nmodel Product {\n  id          String   @id @map(\"_id\")\n  name        String\n  description String\n  price       Float\n  stock       Int\n  category    String\n  attributes  Json? // Flexible fields like { \"color\": \"red\", \"size\": \"XL\" }\n  tags        String[]\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n}\n",
+  "inlineSchemaHash": "c507d071a7eb98d4b404b97e7b9080441287c88c1fcb6fa0fe8a2fd3533f9a81",
   "copyEngine": true
 }
 config.dirname = '/'

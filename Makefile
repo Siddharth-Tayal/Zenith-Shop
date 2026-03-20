@@ -19,6 +19,8 @@ dev:
 
 	@echo "${YELLOW}🔐 Starting Auth Service...${RESET}"
 	nodemon services/auth-services/index.js &
+	@echo "${YELLOW}🔐 Starting Product Service...${RESET}"
+	nodemon services/product-services/index.js &
 
 	@echo "${BLUE}🌉 Starting API Gateway...${RESET}"
 	# We run the Gateway last and NOT in the background so we can see the main logs
