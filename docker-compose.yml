@@ -11,10 +11,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
   mongodb:
-    image: mongo
-    ports: ["27017:27017"]
-    volumes:
-      - mongo_data:/data/db
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate() }" | mongosh --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   redis:
     image: redis

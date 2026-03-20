@@ -2015,7 +2015,7 @@ export namespace Prisma {
   }
 
   export type ProductCreateInput = {
-    id?: string
+    id: string
     name: string
     description: string
     price: number
@@ -2028,7 +2028,7 @@ export namespace Prisma {
   }
 
   export type ProductUncheckedCreateInput = {
-    id?: string
+    id: string
     name: string
     description: string
     price: number
@@ -2065,7 +2065,7 @@ export namespace Prisma {
   }
 
   export type ProductCreateManyInput = {
-    id?: string
+    id: string
     name: string
     description: string
     price: number
