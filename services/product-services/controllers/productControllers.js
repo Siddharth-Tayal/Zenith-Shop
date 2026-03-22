@@ -4,6 +4,7 @@ import { KafkaUtil } from '../../../packages/shared/kafka.js';
 
 export const createProduct = async (req, res) => {
     const { id, name, description, price, stock, category, attributes, tags } = req.body;
+    console.warn("Id : ",id)
 
     try {
         // 1. DATABASE WRITE (Using your specific schema)
@@ -49,8 +50,10 @@ export const getProductDetails = async (req, res) => {
     try {
         // 1. Check Redis
         const cached = await RedisUtil.getCache(cacheKey);
+        console.log(cacheKey , "cached key")
         if (cached) return res.json({ ...cached, source: 'redis' });
 
+        console.log("unchaned")
         // 2. Fallback to MongoDB
         const product = await mgClient.product.findUnique({ where: { id } });
         
@@ -74,7 +77,7 @@ export const updateProduct = async (req, res) => {
         });
 
         // 4. INVALIDATE CACHE: If product changes, delete the old Redis key
-        await RedisUtil.setCache(`prod:${id}`, null, 0); 
+        await RedisUtil.delCache(`prod:${id}`); 
 
         // 5. ASYNC SYNC: Tell Kafka so the Search Service can update its index
         KafkaUtil.emit('product.updates', { type: 'PRODUCT_UPDATED', id, data: updated });

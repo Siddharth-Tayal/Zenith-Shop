@@ -16,7 +16,9 @@ export const RedisUtil = {
   async decrement(key, amount = 1) {
     return await redis.decrby(key, amount);
   },
-
+  async delCache(key) {
+      return await redis.del(key);
+  },
   // Use for: Fast Product/User lookups
   async setCache(key, value, ttlSeconds = 3600) {
     const data = typeof value === 'string' ? value : JSON.stringify(value);
