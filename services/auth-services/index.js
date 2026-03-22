@@ -2,10 +2,11 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { register, login } from './controllers/authControllers.js';
+import { register, login, validate } from './controllers/authControllers.js';
 import { pgClient } from '../../packages/database/index.js';
 import { KafkaUtil } from '../../packages/shared/kafka.js';
-
+import { RedisUtil } from '../../packages/shared/redis.js';
+import jwt from 'jsonwebtoken';
 const app = express();
 const PORT = process.env.AUTH_SERVICE_PORT || 3001;
 
@@ -15,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 
 // 2. ROUTES
+// Add this to your Auth Service (Port 3001)
+app.get('/validate', validate);
 app.post('/register', register);
 app.post('/login', login);
 

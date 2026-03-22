@@ -46,12 +46,41 @@ export const login = async (req, res) => {
             email: user.email,
             role: user.role || 'USER' 
         }, 86400);
-
+        console.error("token",token)
         // 3. Audit Log (Kafka) - Record the login without slowing down the response
         await KafkaUtil.emit('user.events', { type: 'USER_LOGIN', userId: user.id });
 
         res.json({ token });
     } else {
         res.status(401).json({ error: "Invalid credentials" });
+    }
+};
+
+export const validate = async(req , res)=>{
+  // 1. Get token from header (NGINX passes this along)
+    const token = req.headers['authorization']?.split(' ')[1];
+    console.log("Hello" , token)
+    if (!token) {
+        return res.status(401).send('No token provided');
+    }
+
+    try {
+        // 2. Verify JWT (Same as your old gateway logic)
+        console.log("gello ")
+        const decoded =  jwt.verify(token, process.env.JWT_SECRET);
+        console.log(decoded , "decoded token")
+        // 3. Check Redis Session
+        const session = await RedisUtil.getCache(`session:${decoded.id}`);
+        console.warn(session)
+        if (!session) {
+            return res.status(401).send('Session expired');
+        }
+
+        // SUCCESS: Tell NGINX this user is allowed through
+        // We can pass the user ID back to NGINX via a header
+        res.set('X-User-Id', decoded.id);
+        return res.status(200).send(); 
+    } catch (err) {
+        return res.status(401).send('Invalid token');
     }
 };
